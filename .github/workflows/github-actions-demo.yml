@@ -25,6 +25,7 @@ jobs:
     
   build:
     name: build
+    needs: Explore-GitHub-Actions
     runs-on: ubuntu-latest
 
     steps:
