@@ -22,7 +22,7 @@ on:
 
 env:
   # Use docker.io for Docker Hub if empty
-  REGISTRY: ghcr.io
+  REGISTRY: docker.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
@@ -80,10 +80,10 @@ jobs:
         with:
           name: Package
           path: target
-      - name: check target forder
-        run: ls target
+    #   - name: check target forder
+    #     run: ls target
 
-      - run: ls 
+    #   - run: ls 
 
       - name: Build and push Docker image
         id: push
