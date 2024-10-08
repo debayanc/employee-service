@@ -71,7 +71,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/${{ github.repository }}
+          images: debayanc/employee-service
 
       - name: create a target folder
         run: mkdir -p target
@@ -92,7 +92,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: debayanc/employee-service
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Generate artifact attestation
