@@ -27,8 +27,30 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build the app with Maven
+      run: mvn -B package --file pom.xml
+    - run: mkdir staging && cp target/*.jar staging
+    - uses: actions/upload-artifact@v4
+      with:
+        name: Package
+        path: staging
+
+
   push_to_registry:
     name: Push Docker image to Docker Hub
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -50,6 +72,14 @@ jobs:
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
           images: my-docker-hub-namespace/my-docker-hub-repository
+
+      - name: create a target folder
+        run: mkdir -p target
+      - name: Download the artifact- api jar
+        uses: actions/download-artifact@v4
+        with:
+          name: Package
+          path: target
 
       - name: Build and push Docker image
         id: push
