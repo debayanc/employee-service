@@ -50,6 +50,7 @@ jobs:
 
   push_to_registry:
     name: Push Docker image to Docker Hub
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -80,10 +81,6 @@ jobs:
         with:
           name: Package
           path: target
-    #   - name: check target forder
-    #     run: ls target
-
-    #   - run: ls 
 
       - name: Build and push Docker image
         id: push
