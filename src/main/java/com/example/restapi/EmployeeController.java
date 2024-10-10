@@ -32,6 +32,12 @@ class EmployeeController {
         this.assembler = assembler;
     }
 
+    @GetMapping("/")
+    public String index() {
+        return "Welcome to employee service!";
+    }
+
+
     @GetMapping("/employees")
     CollectionModel<EntityModel<Employee>> all() {
 
