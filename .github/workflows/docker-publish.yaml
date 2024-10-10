@@ -24,7 +24,7 @@ env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
-  IMAGE_NAME: employees
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -71,7 +71,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: debayanc/employees
+          images: debayanc/employee-service
 
       - name: create a target folder
         run: mkdir -p target
