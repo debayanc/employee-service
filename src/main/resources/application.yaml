@@ -15,7 +15,7 @@ spring:
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://${DB_SERVER}:${DB_PORT}/mydatabase
+    url: jdbc:mysql://${DB_SERVER}:${DB_PORT}/${DB_DATABASENAME}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
