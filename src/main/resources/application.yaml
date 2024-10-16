@@ -1,10 +1,21 @@
+# spring:
+#   jpa:
+#     show-sql: true
+#     hibernate:
+#       ddl-auto: update
+#   datasource:
+#     url: jdbc:mysql://localhost:3306/mydatabase
+#     username: myuser
+#     password: secret
+#     driver-class-name: com.mysql.cj.jdbc.Driver
+
 spring:
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
   datasource:
-    url: jdbc:mysql://localhost:3306/mydatabase
-    username: myuser
-    password: secret
+    url: jdbc:mysql://${DB_SERVER}:${DB_PORT}/mydatabase
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
