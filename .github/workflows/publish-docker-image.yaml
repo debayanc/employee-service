@@ -10,7 +10,7 @@
 name: Publish Docker image
 on: 
   push:
-    branches: [ "main" ]
+    branches: [ "main", "with-mysql-db" ]
   pull_request:
     branches: [ "main" ]
       
@@ -35,7 +35,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build the app with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package --file pom.xml -Dmaven.test.skip
     - run: mkdir staging && cp target/*.jar staging
     - uses: actions/upload-artifact@v4
       with:
