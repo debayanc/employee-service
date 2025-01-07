@@ -5,7 +5,7 @@ metadata:
   labels:
     env: sandbox
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
   - port: 8080
   selector:

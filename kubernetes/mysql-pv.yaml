@@ -5,7 +5,8 @@ metadata:
   labels:
     type: local
 spec:
-  storageClassName: manual
+  storageClassName: standard
+  persistentVolumeReclaimPolicy: Retain
   capacity:
     storage: 2Gi
   accessModes:
@@ -20,7 +21,7 @@ metadata:
   labels:
     app: employee-service
 spec:
-  storageClassName: manual
+  storageClassName: standard
   accessModes:
     - ReadWriteOnce
   resources:
