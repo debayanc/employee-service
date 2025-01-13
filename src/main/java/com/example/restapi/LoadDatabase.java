@@ -1,11 +1,10 @@
 package com.example.restapi;
 
-import org.springframework.boot.CommandLineRunner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 @Configuration
@@ -16,8 +15,8 @@ class LoadDatabase {
     @Bean
     CommandLineRunner initDatabase(EmployeeRepository repository) {
         return args -> {
-            log.info("Preloading " + repository.save(new Employee("Bilbo Baggins", "burglar")));
-            log.info("Preloading " + repository.save(new Employee("Frodo Baggins", "thief")));
+            log.info("Preloading " + repository.saveAndFlush(new Employee("Bilbo Baggins", "burglar")));
+            log.info("Preloading " + repository.saveAndFlush(new Employee("Frodo Baggins", "thief")));
         };
     }
 }
