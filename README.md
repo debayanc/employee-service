@@ -1,17 +1,19 @@
-# -----Sample Spring-Boot REST api----
+# -----Sample Spring-Boot REST api, deployed in kubernates cluster----
 ## -----Employee Service------
+
 
 Github action builds the application and push the docker image to docker hub : [employee-service](https://hub.docker.com/repository/docker/debayanc/employee-service/general) 
 
 ## Build the app 
 ### Make JAR file
+skip test at the build time m as it will try to connect local mysql instance
 `mvn package -Dmaven.test.skip`
 
 ### Build docker image
-`docker build -t debayanc/employee-service:with-mysql-db .`
+`docker build -t debayanc/employee-service:latest .`
 
 ### Push docker image
-`push debayanc/employee-service:with-mysql-db`
+`push debayanc/employee-service:latest`
 
 ### Locally test the app
 1. use `docker compose up` to spin up mysql in local docker env 
