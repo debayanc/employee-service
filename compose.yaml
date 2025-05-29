@@ -10,14 +10,14 @@ services:
     ports:
       - '3306:3306'
 
-  # employee-service:
-  #   container_name: employee-service1
-  #   image: debayanc/employee-service:with-mysql-db
-  #   environment:
-  #     - 'DB_SERVER=mysql'
-  #     - 'DB_PORT=3306'
-  #     - 'MYSQL_DATABASE=mydatabase'
-  #     - 'MYSQL_PASSWORD=secret'
-  #     - 'MYSQL_USER=myuser'
-  #   ports:
-  #     - 8080
+  employee-service:
+    container_name: employee-service1
+    image: debayanc/employee-service:with-mysql-db
+    environment:
+      - 'DB_SERVER=mysql'
+      - 'DB_PORT=3306'
+      - 'MYSQL_DATABASE=mydatabase'
+      - 'MYSQL_PASSWORD=secret'
+      - 'MYSQL_USER=myuser'
+    ports:
+      - 8080

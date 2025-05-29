@@ -15,8 +15,12 @@ class LoadDatabase {
     @Bean
     CommandLineRunner initDatabase(EmployeeRepository repository) {
         return args -> {
-            log.info("Preloading " + repository.saveAndFlush(new Employee("Bilbo Baggins", "burglar")));
-            log.info("Preloading " + repository.saveAndFlush(new Employee("Frodo Baggins", "thief")));
+            //log.info("Preloading " + repository.saveAndFlush(new Employee("Bilbo Baggins", "burglar")));
+            //log.info("Preloading " + repository.saveAndFlush(new Employee("Frodo Baggins", "thief")));
+            //log.info("Preloading " + repository.findOne(Employee<>:null));
+            // find only one entry of Employee from the database, if null return null
+            log.info("Preloading " + repository.findOne(null));
+
         };
     }
 }
