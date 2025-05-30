@@ -1,27 +1,58 @@
-# -----Sample Spring-Boot REST api, deployed in kubernates cluster----
-## -----Employee Service------
+# Spring Boot REST API with MySQL in Docker
 
+## Employee Service
 
-Github action builds the application and push the docker image to docker hub : [employee-service](https://hub.docker.com/repository/docker/debayanc/employee-service/general) 
+A sample Spring Boot REST API that connects to a MySQL database, deployed using Docker Compose.
 
-## Build the app 
-### Make JAR file
-skip test at the build time m as it will try to connect local mysql instance
-`mvn package -Dmaven.test.skip`
+## Quick Start
 
-### Build docker image
-`docker build -t debayanc/employee-service:latest .`
+### Build and Run with Docker Compose
+```bash
+# Build the application
+mvn clean package -Dmaven.test.skip
 
-### Push docker image
-`push debayanc/employee-service:latest`
+# Start the application with MySQL
+docker compose up --build
+```
 
-### Locally test the app
-1. use `docker compose up` to spin up mysql in local docker env 
-2. run the application docker image in the same docker network where mysql is runninng - 
-`docker run --network container:guide-mysql debayanc/employee-service:with-mysql-db`
-3. attach another `alpine` container in the same network to test from that container as the application can't be tested via loaclhost:/8080
-`docker run --rm --network container:guide-mysql -it alpine`
-`apk add curl`
-`curl http://localhost:8080/`
-`curl http://localhost:8080/employees`
-`curl http://localhost:8080/employees/1`
+The application will be available at http://localhost:8080
+
+## Development Workflow
+
+### Build the JAR file
+```bash
+mvn package -Dmaven.test.skip
+```
+
+### Build Docker image manually
+```bash
+docker build -t debayanc/employee-service:latest .
+```
+
+### Push Docker image to registry
+```bash
+docker push debayanc/employee-service:latest
+```
+
+## Testing the API
+
+### Endpoints
+- `GET /` - Welcome message
+- `GET /employees` - List all employees
+- `GET /employees/{id}` - Get employee by ID
+- `POST /employees` - Create new employee
+- `PUT /employees/{id}` - Update employee
+- `DELETE /employees/{id}` - Delete employee
+
+### Sample API Test
+```bash
+# Test the welcome endpoint
+curl http://localhost:8080/
+
+# List all employees
+curl http://localhost:8080/employees
+```
+
+## CI/CD
+
+GitHub Actions automatically builds and publishes the Docker image to Docker Hub: [employee-service](https://hub.docker.com/repository/docker/debayanc/employee-service/general)
