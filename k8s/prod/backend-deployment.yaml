@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: employee-service
+  namespace: employee-prod
   labels:
     app: employee-service
     tier: backend
@@ -17,6 +18,10 @@ spec:
         app: employee-service
         tier: backend
     spec:
+      initContainers:
+      - name: wait-for-db
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nslookup employee-service-mysql.employee-prod.svc.cluster.local; do echo waiting for database; sleep 2; done;']
       containers:
       - name: employee-service
         image: debayanc/employee-service:main
@@ -24,28 +29,29 @@ spec:
         - containerPort: 8080
         resources:
           requests:
-            cpu: '0.1'
-            memory: "300Mi"
-          limits:
             cpu: '0.2'
-            memory: "600Mi"
+            memory: "400Mi"
+          limits:
+            cpu: '0.5'
+            memory: "800Mi"
         startupProbe:
           httpGet:
             path: /
             port: 8080
           failureThreshold: 5
           periodSeconds: 60
+          initialDelaySeconds: 180
         readinessProbe:
           httpGet:
             path: /
             port: 8080
-          initialDelaySeconds: 5
+          initialDelaySeconds: 180
           periodSeconds: 10
         livenessProbe:
           httpGet:
             path: /
             port: 8080
-          initialDelaySeconds: 5
+          initialDelaySeconds: 180
           periodSeconds: 20
         env:
         - name: DB_PASSWORD
@@ -54,10 +60,7 @@ spec:
               name: database-secret
               key: mysql-user-password
         - name: DB_SERVER
-          valueFrom:
-            configMapKeyRef:
-              name: database-config
-              key: mysql-server
+          value: employee-service-mysql
         - name: DB_DATABASENAME
           valueFrom:
             configMapKeyRef:

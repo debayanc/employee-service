@@ -1,23 +1,8 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: employee-service-mysql
-  labels:
-    app: employee-service
-    tier: database
-spec:
-  ports:
-    - port: 3306
-      name: mysql
-  selector:
-    app: employee-service
-    tier: database
-  clusterIP: None
----
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: employee-service-mysql
+  namespace: employee-prod
   labels:
     app: employee-service
     tier: database
@@ -38,9 +23,12 @@ spec:
       - image: mysql:latest
         name: mysql
         resources:
-          limits:
+          requests:
             cpu: '0.2'
             memory: "1Gi"
+          limits:
+            cpu: '0.5'
+            memory: "2Gi"
         env:
         - name: MYSQL_DATABASE
           valueFrom:
@@ -65,6 +53,8 @@ spec:
         livenessProbe:
           tcpSocket:
             port: 3306
+          initialDelaySeconds: 30
+          periodSeconds: 10
         readinessProbe:
           tcpSocket:
             port: 3306
@@ -83,4 +73,4 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 1Gi
+          storage: 2Gi
