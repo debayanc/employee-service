@@ -9,10 +9,17 @@ services:
       - 'MYSQL_USER=myuser'
     ports:
       - '3306:3306'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "myuser", "--password=secret"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   employee-service:
     container_name: employee-service1
-    image: debayanc/employee-service:with-mysql-db
+    build: 
+      context: .
+      dockerfile: Dockerfile
     environment:
       - 'DB_SERVER=mysql'
       - 'DB_PORT=3306'
@@ -21,3 +28,7 @@ services:
       - 'DB_USERNAME=myuser'
     ports:
       - '8080:8080'
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: on-failure
