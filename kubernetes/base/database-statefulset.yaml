@@ -4,45 +4,35 @@ metadata:
   name: employee-service-mysql
   labels:
     app: employee-service
+    tier: database
 spec:
   ports:
     - port: 3306
+      name: mysql
   selector:
     app: employee-service
-    tier: mysql
+    tier: database
   clusterIP: None
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mysql-pvc
-  labels:
-    app: employee-service
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
----
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: employee-service-mysql
   labels:
     app: employee-service
+    tier: database
 spec:
+  serviceName: employee-service-mysql
+  replicas: 1
   selector:
     matchLabels:
       app: employee-service
-      tier: mysql
-  strategy:
-    type: Recreate
+      tier: database
   template:
     metadata:
       labels:
         app: employee-service
-        tier: mysql
+        tier: database
     spec:
       containers:
       - image: mysql:latest
@@ -55,33 +45,42 @@ spec:
         - name: MYSQL_DATABASE
           valueFrom:
             configMapKeyRef:
-              name: mysql-config-map
+              name: database-config
               key: mysql-database-name
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mysql-pass
+              name: database-secret
               key: mysql-root-password
         - name: MYSQL_USER
           valueFrom:
             configMapKeyRef:
-              name: mysql-config-map
+              name: database-config
               key: mysql-user-username
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mysql-pass
+              name: database-secret
               key: mysql-user-password
         livenessProbe:
           tcpSocket:
             port: 3306
+        readinessProbe:
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 5
+          periodSeconds: 10
         ports:
         - containerPort: 3306
           name: mysql
         volumeMounts:
         - name: mysql-persistent-storage
           mountPath: /var/lib/mysql
-      volumes:
-      - name: mysql-persistent-storage
-        persistentVolumeClaim:
-          claimName: mysql-pvc
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-persistent-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

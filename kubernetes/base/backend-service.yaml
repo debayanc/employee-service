@@ -3,10 +3,14 @@ kind: Service
 metadata:
   name: employee-service
   labels:
-    env: sandbox
+    app: employee-service
+    tier: backend
 spec:
   type: NodePort
   ports:
   - port: 8080
+    targetPort: 8080
+    name: http
   selector:
-    env: sandbox
+    app: employee-service
+    tier: backend
