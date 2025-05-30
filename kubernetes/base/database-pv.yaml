@@ -3,6 +3,8 @@ kind: PersistentVolume
 metadata:
   name: mysql-pv-volume
   labels:
+    app: employee-service
+    tier: database
     type: local
 spec:
   storageClassName: standard
@@ -20,6 +22,7 @@ metadata:
   name: mysql-pv-claim
   labels:
     app: employee-service
+    tier: database
 spec:
   storageClassName: standard
   accessModes:
