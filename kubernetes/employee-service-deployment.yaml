@@ -17,7 +17,6 @@ spec:
       containers:
       - name:  employee-service
         image: debayanc/employee-service:main
-        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         resources:
@@ -64,3 +63,5 @@ spec:
               key: mysql-user-username
         - name: DB_PORT
           value: '3306'
+      - name: fdlogger
+        image: fluentd
