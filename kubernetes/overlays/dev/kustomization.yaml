@@ -12,8 +12,11 @@ nameSuffix: -v1
 commonLabels:
   environment: development
 
-patchesStrategicMerge:
-- replica-count.yaml
+patches:
+- path: replica-count.yaml
+  target:
+    kind: Deployment
+    name: base-employee-service
 
 replicas:
 - name: base-employee-service

@@ -11,9 +11,15 @@ namePrefix: prod-
 commonLabels:
   environment: production
 
-patchesStrategicMerge:
-- resource-limits.yaml
-- replica-count.yaml
+patches:
+- path: resource-limits.yaml
+  target:
+    kind: Deployment
+    name: base-employee-service
+- path: replica-count.yaml
+  target:
+    kind: Deployment
+    name: base-employee-service
 
 replicas:
 - name: base-employee-service
