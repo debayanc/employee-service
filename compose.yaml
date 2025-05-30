@@ -16,8 +16,8 @@ services:
     environment:
       - 'DB_SERVER=mysql'
       - 'DB_PORT=3306'
-      - 'MYSQL_DATABASE=mydatabase'
-      - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_USER=myuser'
+      - 'DB_DATABASENAME=mydatabase'
+      - 'DB_PASSWORD=secret'
+      - 'DB_USERNAME=myuser'
     ports:
-      - 8080
+      - '8080:8080'
