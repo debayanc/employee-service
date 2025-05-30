@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 
 @Configuration
@@ -13,14 +14,15 @@ class LoadDatabase {
     private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
 
     @Bean
-    CommandLineRunner initDatabase(EmployeeRepository repository) {
+    CommandLineRunner initDatabase(JdbcTemplate jdbcTemplate) {
         return args -> {
-            log.info("Preloading " + repository.saveAndFlush(new Employee("Bilbo Baggins", "burglar")));
-            log.info("Preloading " + repository.saveAndFlush(new Employee("Frodo Baggins", "thief")));
-            // log.info("Preloading " + repository.findOne(Employee<>:null));
-            // find only one entry of Employee from the database, if null return null
-            //log.info("Preloading " + repository.findOne(null));
-
+            try {
+                // Just verify the database connection by executing a simple query
+                jdbcTemplate.queryForObject("SELECT 1", Integer.class);
+                log.info("Database connection verified successfully");
+            } catch (Exception e) {
+                log.error("Failed to connect to database: {}", e.getMessage());
+            }
         };
     }
 }
