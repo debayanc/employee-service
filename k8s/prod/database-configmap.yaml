@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-config
+  namespace: employee-prod
+  labels:
+    app: employee-service
+    tier: database
+data:
+  mysql-server: employee-service-mysql
+  mysql-database-name: demoDb
+  mysql-user-username: myUser

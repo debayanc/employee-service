@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: employee-service-mysql
+  namespace: employee-prod
+  labels:
+    app: employee-service
+    tier: database
+spec:
+  ports:
+    - port: 3306
+      name: mysql
+  selector:
+    app: employee-service
+    tier: database
+  clusterIP: None

@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: employee-service-mysql
+  namespace: employee-dev
+  labels:
+    app: employee-service
+    tier: database
+spec:
+  serviceName: employee-service-mysql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: employee-service
+      tier: database
+  template:
+    metadata:
+      labels:
+        app: employee-service
+        tier: database
+    spec:
+      containers:
+      - image: mysql:latest
+        name: mysql
+        resources:
+          requests:
+            cpu: '0.1'
+            memory: "500Mi"
+          limits:
+            cpu: '0.2'
+            memory: "1Gi"
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: mysql-database-name
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database-secret
+              key: mysql-root-password
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: database-config
+              key: mysql-user-username
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database-secret
+              key: mysql-user-password
+        livenessProbe:
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-persistent-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
