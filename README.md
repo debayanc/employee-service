@@ -17,41 +17,30 @@ docker compose up --build
 
 The application will be available at http://localhost:8080
 
-### Kubernetes Deployment
+### Kubernetes Deployment with Helm
 
-We provide simple Kubernetes configurations for both development and production environments:
-
-#### Backend Only Deployment
+#### Deploy with Helm
 ```bash
-# Deploy backend to development environment
-./deploy-dev.sh
+# Deploy to development environment
+./helm-deploy.sh
 
-# Deploy backend to production environment
-./deploy-prod.sh
-```
-
-#### Full Stack Deployment (Backend + Frontend)
-```bash
-# Deploy both backend and frontend to development environment
-./deploy-all-dev.sh
-
-# Deploy both backend and frontend to production environment
-./deploy-all-prod.sh
+# Deploy to production environment
+helm install employee-service ./helm/employee-service \
+  --namespace employee-prod \
+  --create-namespace \
+  --set namespace=employee-prod \
+  --set image.tag=latest
 ```
 
 > **Note:** The application may take approximately 5 minutes to start serving requests after deployment due to database initialization and Spring Boot startup time.
 
 #### Cleanup
 ```bash
-# Clean up backend only
-./cleanup-dev.sh                # Development environment
-./cleanup-prod.sh               # Production environment
-./cleanup.sh --all              # All environments including namespaces
+# Clean up Helm deployment
+./helm-cleanup.sh
 
-# Clean up both backend and frontend
-./cleanup-all-dev.sh            # Development environment
-./cleanup-all-prod.sh           # Production environment
-./cleanup-all.sh --all          # All environments including namespaces
+# Or manually
+helm uninstall employee-service -n employee-dev
 ```
 
 ## Development Workflow
@@ -90,12 +79,24 @@ curl http://localhost:8080/
 curl http://localhost:8080/employees
 ```
 
+## Helm Chart
+
+The application is packaged as a Helm chart located in `helm/employee-service/`.
+
+### Configuration
+Key values in `values.yaml`:
+- `replicaCount`: Number of application replicas
+- `image.repository`: Docker image repository
+- `image.tag`: Docker image tag
+- `mysql.database`: MySQL database name
+- `mysql.username`: MySQL username
+- `namespace`: Target namespace
+
 ## Kubernetes Architecture
 
 - **MySQL**: Deployed as a StatefulSet with persistent storage
-- **Employee Service**: Deployed as a Deployment with 3 replicas for high availability
-- **Frontend**: Nginx-based web interface to interact with the API
-- **Services**: NodePort services to expose both the API and frontend
+- **Employee Service**: Deployed as a Deployment with configurable replicas
+- **Services**: NodePort services to expose the API
 
 ## CI/CD
 
