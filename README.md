@@ -21,36 +21,37 @@ The application will be available at http://localhost:8080
 
 We provide simple Kubernetes configurations for both development and production environments:
 
-#### Development Environment
+#### Backend Only Deployment
 ```bash
-# Deploy to development environment
+# Deploy backend to development environment
 ./deploy-dev.sh
 
-# Or manually with kubectl
-kubectl apply -f k8s/dev/
+# Deploy backend to production environment
+./deploy-prod.sh
 ```
 
-#### Production Environment
+#### Full Stack Deployment (Backend + Frontend)
 ```bash
-# Deploy to production environment
-./deploy-prod.sh
+# Deploy both backend and frontend to development environment
+./deploy-all-dev.sh
 
-# Or manually with kubectl
-kubectl apply -f k8s/prod/
+# Deploy both backend and frontend to production environment
+./deploy-all-prod.sh
 ```
 
 > **Note:** The application may take approximately 5 minutes to start serving requests after deployment due to database initialization and Spring Boot startup time.
 
 #### Cleanup
 ```bash
-# Clean up development environment
-./cleanup-dev.sh
+# Clean up backend only
+./cleanup-dev.sh                # Development environment
+./cleanup-prod.sh               # Production environment
+./cleanup.sh --all              # All environments including namespaces
 
-# Clean up production environment
-./cleanup-prod.sh
-
-# Clean up all environments including namespaces
-./cleanup.sh --all
+# Clean up both backend and frontend
+./cleanup-all-dev.sh            # Development environment
+./cleanup-all-prod.sh           # Production environment
+./cleanup-all.sh --all          # All environments including namespaces
 ```
 
 ## Development Workflow
@@ -93,7 +94,8 @@ curl http://localhost:8080/employees
 
 - **MySQL**: Deployed as a StatefulSet with persistent storage
 - **Employee Service**: Deployed as a Deployment with 3 replicas for high availability
-- **Service**: NodePort service to expose the API
+- **Frontend**: Nginx-based web interface to interact with the API
+- **Services**: NodePort services to expose both the API and frontend
 
 ## CI/CD
 

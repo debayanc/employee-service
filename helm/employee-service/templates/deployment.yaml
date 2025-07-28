@@ -1,39 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: employee-service
-  namespace: employee-prod
+  name: {{ .Chart.Name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: employee-service
+    app: {{ .Chart.Name }}
     tier: backend
 spec:
-  replicas: 3
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: employee-service
+      app: {{ .Chart.Name }}
       tier: backend
   template:
     metadata:
       labels:
-        app: employee-service
+        app: {{ .Chart.Name }}
         tier: backend
     spec:
       initContainers:
       - name: wait-for-db
         image: busybox:1.28
-        command: ['sh', '-c', 'until nslookup employee-service-mysql.employee-prod.svc.cluster.local; do echo waiting for database; sleep 2; done;']
+        command: ['sh', '-c', 'until nslookup {{ .Chart.Name }}-mysql.{{ .Values.namespace }}.svc.cluster.local; do echo waiting for database; sleep 2; done;']
       containers:
-      - name: employee-service
-        image: debayanc/employee-service:main
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: 8080
         resources:
-          requests:
-            cpu: '0.2'
-            memory: "400Mi"
-          limits:
-            cpu: '0.5'
-            memory: "800Mi"
+          {{- toYaml .Values.resources | nindent 10 }}
         startupProbe:
           httpGet:
             path: /
@@ -60,7 +56,7 @@ spec:
               name: database-secret
               key: mysql-user-password
         - name: DB_SERVER
-          value: employee-service-mysql
+          value: {{ .Chart.Name }}-mysql
         - name: DB_DATABASENAME
           valueFrom:
             configMapKeyRef:
@@ -73,5 +69,3 @@ spec:
               key: mysql-user-username
         - name: DB_PORT
           value: '3306'
-      - name: fdlogger
-        image: fluentd

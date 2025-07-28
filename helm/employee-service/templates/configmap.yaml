@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-config
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    tier: database
+data:
+  mysql-server: {{ .Chart.Name }}-mysql
+  mysql-database-name: {{ .Values.mysql.database }}
+  mysql-user-username: {{ .Values.mysql.username }}
