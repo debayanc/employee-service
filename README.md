@@ -17,40 +17,30 @@ docker compose up --build
 
 The application will be available at http://localhost:8080
 
-### Kubernetes Deployment
+### Kubernetes Deployment with Helm
 
-We provide simple Kubernetes configurations for both development and production environments:
-
-#### Development Environment
+#### Deploy with Helm
 ```bash
 # Deploy to development environment
-./deploy-dev.sh
+./helm-deploy.sh
 
-# Or manually with kubectl
-kubectl apply -f k8s/dev/
-```
-
-#### Production Environment
-```bash
 # Deploy to production environment
-./deploy-prod.sh
-
-# Or manually with kubectl
-kubectl apply -f k8s/prod/
+helm install employee-service ./helm/employee-service \
+  --namespace employee-prod \
+  --create-namespace \
+  --set namespace=employee-prod \
+  --set image.tag=latest
 ```
 
 > **Note:** The application may take approximately 5 minutes to start serving requests after deployment due to database initialization and Spring Boot startup time.
 
 #### Cleanup
 ```bash
-# Clean up development environment
-./cleanup-dev.sh
+# Clean up Helm deployment
+./helm-cleanup.sh
 
-# Clean up production environment
-./cleanup-prod.sh
-
-# Clean up all environments including namespaces
-./cleanup.sh --all
+# Or manually
+helm uninstall employee-service -n employee-dev
 ```
 
 ## Development Workflow
@@ -89,11 +79,24 @@ curl http://localhost:8080/
 curl http://localhost:8080/employees
 ```
 
+## Helm Chart
+
+The application is packaged as a Helm chart located in `helm/employee-service/`.
+
+### Configuration
+Key values in `values.yaml`:
+- `replicaCount`: Number of application replicas
+- `image.repository`: Docker image repository
+- `image.tag`: Docker image tag
+- `mysql.database`: MySQL database name
+- `mysql.username`: MySQL username
+- `namespace`: Target namespace
+
 ## Kubernetes Architecture
 
 - **MySQL**: Deployed as a StatefulSet with persistent storage
-- **Employee Service**: Deployed as a Deployment with 3 replicas for high availability
-- **Service**: NodePort service to expose the API
+- **Employee Service**: Deployed as a Deployment with configurable replicas
+- **Services**: NodePort services to expose the API
 
 ## CI/CD
 

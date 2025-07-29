@@ -1,34 +1,29 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: employee-service-mysql
-  namespace: employee-prod
+  name: {{ .Chart.Name }}-mysql
+  namespace: {{ .Values.namespace }}
   labels:
-    app: employee-service
+    app: {{ .Chart.Name }}
     tier: database
 spec:
-  serviceName: employee-service-mysql
+  serviceName: {{ .Chart.Name }}-mysql
   replicas: 1
   selector:
     matchLabels:
-      app: employee-service
+      app: {{ .Chart.Name }}
       tier: database
   template:
     metadata:
       labels:
-        app: employee-service
+        app: {{ .Chart.Name }}
         tier: database
     spec:
       containers:
-      - image: mysql:latest
+      - image: {{ .Values.mysql.image }}
         name: mysql
         resources:
-          requests:
-            cpu: '0.2'
-            memory: "1Gi"
-          limits:
-            cpu: '0.5'
-            memory: "2Gi"
+          {{- toYaml .Values.mysql.resources | nindent 10 }}
         env:
         - name: MYSQL_DATABASE
           valueFrom:
@@ -73,4 +68,4 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 2Gi
+          storage: {{ .Values.mysql.storage }}
