@@ -31,5 +31,6 @@ mysql:
       cpu: '0.2'
       memory: "1Gi"
   storage: 1Gi
+  storageClass: gp2
 
 namespace: employee-dev
